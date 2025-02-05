@@ -1,0 +1,218 @@
+import random
+import tkinter as tk
+
+
+# Define the dictionary for Hindi-to-English and English-to-Hindi translations
+common_hindi_words = [
+    {"Hindi": "नमस्ते", "English": "Hello"},
+    {"Hindi": "धन्यवाद", "English": "Thank you"},
+    {"Hindi": "हाँ", "English": "Yes"},
+    {"Hindi": "नहीं", "English": "No"},
+    {"Hindi": "कैसे हैं?", "English": "How are you?"},
+    {"Hindi": "मुझे माफ करें", "English": "Excuse me / I’m sorry"},
+    {"Hindi": "कृपया", "English": "Please"},
+    {"Hindi": "अलविदा", "English": "Goodbye"},
+    {"Hindi": "क्या", "English": "What"},
+    {"Hindi": "कहाँ", "English": "Where"},
+    {"Hindi": "खुशी", "English": "Happiness"},
+    {"Hindi": "पानी", "English": "Water"},
+    {"Hindi": "सपना", "English": "Dream"},
+    {"Hindi": "दोस्त", "English": "Friend"},
+    {"Hindi": "रात", "English": "Night"},
+    {"Hindi": "दिन", "English": "Day"},
+    {"Hindi": "घर", "English": "Home"},
+    {"Hindi": "काम", "English": "Work"},
+    {"Hindi": "खाना", "English": "Food"},
+    {"Hindi": "पढ़ाई", "English": "Study"},
+    {"Hindi": "विद्यालय", "English": "School"},
+    {"Hindi": "किताब", "English": "Book"},
+    {"Hindi": "सेलफोन", "English": "Mobile phone"},
+    {"Hindi": "शांति", "English": "Peace"},
+    {"Hindi": "अच्छा", "English": "Good"},
+    {"Hindi": "बुरा", "English": "Bad"},
+    {"Hindi": "मित्र", "English": "Companion"},
+    {"Hindi": "समय", "English": "Time"},
+    {"Hindi": "स्वास्थ्य", "English": "Health"},
+    {"Hindi": "दया", "English": "Kindness"},
+    {"Hindi": "शक्ति", "English": "Power"},
+    {"Hindi": "आधुनिक", "English": "Modern"},
+    {"Hindi": "सुनना", "English": "Listen"},
+    {"Hindi": "देखना", "English": "See"},
+    {"Hindi": "चलना", "English": "Walk"},
+    {"Hindi": "सपने", "English": "Dreams"},
+    {"Hindi": "चीज", "English": "Thing"},
+    {"Hindi": "लव", "English": "Love"},
+    {"Hindi": "संगीत", "English": "Music"},
+    {"Hindi": "नदी", "English": "River"},
+    {"Hindi": "पहाड़", "English": "Mountain"},
+    {"Hindi": "समुंदर", "English": "Ocean"},
+    {"Hindi": "आसमान", "English": "Sky"},
+    {"Hindi": "बारिश", "English": "Rain"},
+    {"Hindi": "धूप", "English": "Sunshine"},
+    {"Hindi": "हवा", "English": "Wind"},
+    {"Hindi": "संसार", "English": "World"},
+    {"Hindi": "बच्चे", "English": "Children"},
+    {"Hindi": "महत्वपूर्ण", "English": "Important"},
+    {"Hindi": "मौसम", "English": "Weather"},
+    {"Hindi": "कृपया मदद करें", "English": "Please help"},
+    {"Hindi": "आपका नाम क्या है?", "English": "What is your name?"},
+    {"Hindi": "क्या आप ठीक हैं?", "English": "Are you okay?"},
+    {"Hindi": "मैं ठीक हूँ", "English": "I am fine"},
+    {"Hindi": "ध्यान रखना", "English": "Take care"},
+    {"Hindi": "चिंता मत करो", "English": "Don't worry"},
+    {"Hindi": "क्या हुआ?", "English": "What happened?"},
+    {"Hindi": "मैं तुमसे प्यार करता हूँ", "English": "I love you"},
+    {"Hindi": "मुझे नहीं पता", "English": "I don’t know"},
+    {"Hindi": "दूर", "English": "Far"},
+    {"Hindi": "पास", "English": "Near"},
+    {"Hindi": "मुलाकात", "English": "Meeting"},
+    {"Hindi": "काम करना", "English": "To work"},
+    {"Hindi": "सोचना", "English": "Think"},
+    {"Hindi": "समझना", "English": "Understand"},
+    {"Hindi": "कितना", "English": "How much"},
+    {"Hindi": "कब", "English": "When"},
+    {"Hindi": "क्यूं", "English": "Why"},
+    {"Hindi": "क्या आप मुझे मदद कर सकते हैं?", "English": "Can you help me?"}
+]
+   
+
+class LanguageQuizApp:
+    def _init_(self, root):
+        self.root = root
+        self.root.title("Language Quiz")
+        self.root.geometry("800x600")
+
+        # Create a canvas for gradient background
+        self.canvas = tk.Canvas(self.root, width=800, height=600)
+        self.canvas.pack(fill="both", expand=True)
+        self.create_gradient("#ADD8E6", "#98FB98")  # Gradient from light blue to light green
+
+        # Fonts and UI elements
+        self.font_title = ('Helvetica', 24, 'bold')
+        self.font_normal = ('Helvetica', 16)
+        self.font_button = ('Helvetica', 14, 'bold')
+
+        # Title
+        self.title_label = tk.Label(self.root, text="Welcome to the Language Quiz", font=self.font_title, bg="#98FB98", fg="#000000", pady=20)
+        self.title_label.place(relx=0.5, y=50, anchor="center")
+
+        # Instructions
+        self.instruction_label = tk.Label(self.root, text="Please select a quiz language:", font=self.font_normal, bg="#ADD8E6", fg="#000000")
+        self.instruction_label.place(relx=0.5, y=150, anchor="center")
+
+        # Buttons for language selection
+        self.hindi_to_english_button = tk.Button(self.root, text="Hindi to English", command=self.start_hindi_to_english, font=self.font_button, bg="#008080", fg="#FFFFFF", width=15)
+        self.hindi_to_english_button.place(relx=0.5, y=200, anchor="center")
+
+        self.english_to_hindi_button = tk.Button(self.root, text="English to Hindi", command=self.start_english_to_hindi, font=self.font_button, bg="#006400", fg="#FFFFFF", width=15)
+        self.english_to_hindi_button.place(relx=0.5, y=260, anchor="center")
+
+    def create_gradient(self, color1, color2):
+        """Create a vertical gradient from color1 to color2."""
+        for i in range(600):  # Canvas height
+            ratio = i / 600
+            r1, g1, b1 = self.hex_to_rgb(color1)
+            r2, g2, b2 = self.hex_to_rgb(color2)
+
+            r = int(r1 + (r2 - r1) * ratio)
+            g = int(g1 + (g2 - g1) * ratio)
+            b = int(b1 + (b2 - b1) * ratio)
+
+            color = self.rgb_to_hex((r, g, b))
+            self.canvas.create_line(0, i, 800, i, fill=color)
+
+    @staticmethod
+    def hex_to_rgb(hex_color):
+        """Convert HEX color to RGB tuple."""
+        hex_color = hex_color.lstrip("#")
+        return tuple(int(hex_color[i:i + 2], 16) for i in (0, 2, 4))
+
+    @staticmethod
+    def rgb_to_hex(rgb_color):
+        """Convert RGB tuple to HEX color."""
+        return f"#{rgb_color[0]:02x}{rgb_color[1]:02x}{rgb_color[2]:02x}"
+
+    def start_hindi_to_english(self):
+        self.language = "Hindi to English"
+        self.setup_quiz()
+
+    def start_english_to_hindi(self):
+        self.language = "English to Hindi"
+        self.setup_quiz()
+
+    def setup_quiz(self):
+        random.shuffle(common_hindi_words)
+        self.questions_to_ask = common_hindi_words[:5]
+        self.current_question = 0
+        self.score = 0
+
+        self.canvas.delete("all")
+        self.title_label.place_forget()
+        self.instruction_label.place_forget()
+        self.hindi_to_english_button.place_forget()
+        self.english_to_hindi_button.place_forget()
+
+        self.question_label = tk.Label(self.root, font=self.font_normal, bg="#ADD8E6", fg="#000000", width=50, height=2)
+        self.question_label.place(relx=0.5, y=150, anchor="center")
+
+        self.answer_entry = tk.Entry(self.root, font=self.font_normal, width=30, bg="#FFFFFF", fg="#000000")
+        self.answer_entry.place(relx=0.5, y=250, anchor="center")
+
+        self.timer_label = tk.Label(self.root, font=self.font_normal, bg="#98FB98", fg="red", width=20)
+        self.timer_label.place(relx=0.5, y=300, anchor="center")
+
+        self.feedback_label = tk.Label(self.root, font=self.font_normal, bg="#ADD8E6", fg="#000000", width=50)
+        self.feedback_label.place(relx=0.5, y=400, anchor="center")
+
+        self.submit_button = tk.Button(self.root, text="Submit Answer", command=self.check_answer, font=self.font_button, bg="#4CAF50", fg="#FFFFFF", width=15)
+        self.submit_button.place(relx=0.5, y=350, anchor="center")
+
+        self.timer_seconds = 30  # Set timer to 30 seconds
+        self.display_question()
+        self.start_timer()
+
+    def start_timer(self):
+        if self.timer_seconds > 0:
+            self.timer_label.config(text=f"Time left: {self.timer_seconds} seconds")
+            self.timer_seconds -= 1
+            self.root.after(1000, self.start_timer)
+        else:
+            self.check_answer()
+
+    def display_question(self):
+        word = self.questions_to_ask[self.current_question]
+        if self.language == "Hindi to English":
+            question_text = f"What is the English translation of '{word['Hindi']}'?"
+        else:
+            question_text = f"What is the Hindi translation of '{word['English']}'?"
+        self.question_label.config(text=question_text)
+
+    def check_answer(self):
+        user_answer = self.answer_entry.get().strip().lower()
+        word = self.questions_to_ask[self.current_question]
+        correct_answer = word['English'].lower() if self.language == "Hindi to English" else word['Hindi'].lower()
+
+        if user_answer == correct_answer:
+            self.score += 1
+            self.feedback_label.config(text="Correct! Your answer is right!", fg="green")
+        else:
+            self.feedback_label.config(text=f"Wrong! The correct answer is '{correct_answer}'.", fg="red")
+
+        self.current_question += 1
+        self.answer_entry.delete(0, tk.END)
+
+        if self.current_question < len(self.questions_to_ask):
+            self.timer_seconds = 30
+            self.display_question()
+            self.start_timer()
+        else:
+            self.end_quiz()
+
+    def end_quiz(self):
+        self.feedback_label.config(text=f"Quiz Complete! Your score: {self.score}/{len(self.questions_to_ask)}", fg="blue")
+        self.submit_button.config(state=tk.DISABLED)
+
+# Run the application
+root = tk.Tk()
+app = LanguageQuizApp(root)
+root.mainloop()
